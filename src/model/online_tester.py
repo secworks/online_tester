@@ -6,6 +6,39 @@ VERBOSE = False
 
 
 #-------------------------------------------------------------------
+# MeanVariance
+#
+# Calculates the mean value and variance (Min, Max).
+#-------------------------------------------------------------------
+class MeanVariance:
+    def __init__(self):
+        self.max   = 0
+        self.min   = 2**31
+        self.sum  = 0.0
+        self.words = 0
+
+        print("MeanVariance: Calculate mean and variance.")
+
+
+    def consume(self, i):
+        if i > self.max:
+            self.max = i
+
+        if i < self.min:
+            self.min = i
+
+        self.sum += i
+        self.words += 1
+
+
+    def present(self):
+        print("MeanVariance:")
+        print("Mean value: 0x%08x, min value: 0x%08x, max value: 0x%08x" %
+              (int(self.sum / self.words), self.min, self.max))
+        print("")
+
+
+#-------------------------------------------------------------------
 # NumOnes
 #
 # Calculates the number of ones and the ration of ones.
@@ -15,6 +48,7 @@ class NumOnes:
         self.ones = 0
         self.bits = 0
         print("NumOnes: Count all one bits.")
+
 
     def consume(self, i):
         for n in xrange(32):
@@ -79,7 +113,7 @@ class BitRuns:
 # Lets test.
 #-------------------------------------------------------------------
 
-num_words = 100000
+num_words = 1000000
 
 print("\n Online tester model")
 print("-===================-")
@@ -88,20 +122,23 @@ print("Running online test models with %d 32-bit words." % num_words)
 print("\nThe following test models are used:")
 print("-----------------------------------")
 
-my_Numones = NumOnes()
-my_BitRuns = BitRuns()
+my_meanvariance = MeanVariance()
+my_numones = NumOnes()
+my_bitruns = BitRuns()
 
 for i in xrange(num_words):
     if VERBOSE:
         print("iteration %d" % i)
     rand = random.randint(0, (2**32) - 1)
-    my_Numones.consume(rand)
-    my_BitRuns.consume(rand)
+    my_meanvariance.consume(rand)
+    my_numones.consume(rand)
+    my_bitruns.consume(rand)
 
 print("\nResults from the models:")
 print("------------------------")
-my_Numones.present()
-my_BitRuns.present()
+my_meanvariance.present()
+my_numones.present()
+my_bitruns.present()
 
 #=======================================================================
 # EOF online_tester.py
